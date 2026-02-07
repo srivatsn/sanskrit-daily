@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07111f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Sanskrit Daily</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-512.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <h1>Sanskrit Daily</h1>
+          <p>Discover and analyze Sanskrit with Azure Foundry.</p>
+        </div>
+        <div class="streak-card">
+          <span class="streak-label">Today</span>
+          <strong id="todayDate"></strong>
+        </div>
+      </header>
+
+      <nav class="tabs" role="tablist" aria-label="Sanskrit learning tabs">
+        <button class="tab-btn active" role="tab" aria-selected="true" data-tab="discover">Discover</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="analyze">Analyze</button>
+      </nav>
+
+      <section class="tab-panel active" id="discoverPanel" role="tabpanel">
+        <div class="card discover-card">
+          <div class="difficulty-row">
+            <span class="difficulty-label">Difficulty</span>
+            <span id="difficultyBadge" class="difficulty-badge">Beginner</span>
+          </div>
+          <p class="sentence-devanagari" id="sentenceDevanagari"></p>
+          <p class="sentence-roman" id="sentenceRoman"></p>
+          <p class="sentence-meaning" id="sentenceMeaning"></p>
+          <div class="meta-grid">
+            <div>
+              <span class="meta-label">Structure</span>
+              <p id="sentenceStructure"></p>
+            </div>
+            <div>
+              <span class="meta-label">Tip</span>
+              <p id="sentenceTip"></p>
+            </div>
+          </div>
+          <p id="discoverStatus" class="analysis-empty hidden"></p>
+          <div class="actions-row">
+            <button id="nextSentenceBtn" class="primary-btn">New Sentence</button>
+            <button id="resetBtn" class="ghost-btn">Reset Progress</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="analyzePanel" role="tabpanel">
+        <div class="card analyze-card">
+          <label for="sentenceInput" class="input-label">Enter a Sanskrit sentence (Devanagari or transliteration)</label>
+          <textarea
+            id="sentenceInput"
+            rows="4"
+            placeholder="e.g., रामः पुस्तकं पठति"
+          ></textarea>
+          <button id="analyzeBtn" class="primary-btn">Analyze Sentence</button>
+
+          <div id="analysisEmpty" class="analysis-empty">
+            Add a sentence and click Analyze to get a word-by-word breakdown.
+          </div>
+
+          <div id="analysisResult" class="analysis-result hidden">
+            <h2>Word-by-Word</h2>
+            <div id="wordBreakdown" class="word-breakdown"></div>
+            <h2>Meaning & Explanation</h2>
+            <p id="overallMeaning" class="overall-meaning"></p>
+            <p id="grammarNotes" class="grammar-notes"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
