@@ -284,7 +284,7 @@ async function analyzeSentence(): Promise<void> {
   }
 
   analyzeBtn.disabled = true;
-  analyzeBtn.textContent = "Analyzing...";
+  analyzeBtn.textContent = "Translating...";
 
   try {
     const response = await fetch("/api/analyze", {
@@ -305,7 +305,7 @@ async function analyzeSentence(): Promise<void> {
     analysisResult.classList.add("hidden");
   } finally {
     analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Analyze Sentence";
+    analyzeBtn.textContent = "Translate Sentence";
   }
 }
 

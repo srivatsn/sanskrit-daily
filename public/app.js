@@ -248,7 +248,7 @@ async function analyzeSentence() {
   }
 
   analyzeBtn.disabled = true;
-  analyzeBtn.textContent = "Analyzing...";
+  analyzeBtn.textContent = "Translating...";
 
   try {
     const response = await fetch("/api/analyze", {
@@ -269,7 +269,7 @@ async function analyzeSentence() {
     analysisResult.classList.add("hidden");
   } finally {
     analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Analyze Sentence";
+    analyzeBtn.textContent = "Translate Sentence";
   }
 }
 
