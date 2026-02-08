@@ -26,7 +26,7 @@
       <header class="app-header">
         <div class="brand">
           <h1>Sanskrit Daily</h1>
-          <p>Discover and analyze Sanskrit with Azure Foundry.</p>
+          <p>Learn Sanskrit one sentence at a time.</p>
         </div>
         <div class="streak-card">
           <span class="streak-label">Today</span>
@@ -48,6 +48,7 @@
           <p class="sentence-devanagari" id="sentenceDevanagari"></p>
           <p class="sentence-roman" id="sentenceRoman"></p>
           <p class="sentence-meaning" id="sentenceMeaning"></p>
+          <div id="discoverWordBreakdown" class="word-breakdown"></div>
           <div class="meta-grid">
             <div>
               <span class="meta-label">Structure</span>
@@ -61,7 +62,8 @@
           <p id="discoverStatus" class="analysis-empty hidden"></p>
           <div class="actions-row">
             <button id="nextSentenceBtn" class="primary-btn">New Sentence</button>
-            <button id="resetBtn" class="ghost-btn">Reset Progress</button>
+            <button id="easierBtn" class="ghost-btn">Make it Easier</button>
+            <button id="harderBtn" class="ghost-btn">Make it Harder</button>
           </div>
         </div>
       </section>

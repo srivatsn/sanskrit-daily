@@ -18,6 +18,7 @@ interface DiscoverResponseBody {
   meaning: string;
   structure: string;
   tip: string;
+  words?: WordBreakdown[];
 }
 
 interface AnalyzeRequestBody {
@@ -145,13 +146,16 @@ app.post(
       const systemPrompt = [
         "You are a Sanskrit tutor.",
         "Return exactly one JSON object with keys:",
-        "level, difficultyIndex, devanagari, roman, meaning, structure, tip",
+        "level, difficultyIndex, devanagari, roman, meaning, structure, tip, words",
+        "where words is an array of objects with keys:",
+        "word, transliteration, partOfSpeech, meaning, grammar",
         "Rules:",
         "- Produce one original Sanskrit sentence in Devanagari with proper punctuation.",
         "- Roman should be IAST transliteration.",
         "- Meaning should be natural English.",
         "- Structure should explain grammar in one short sentence.",
         "- Tip should be one practical learning tip.",
+        "- In words array: word must be in Devanagari script, transliteration must be IAST, include part of speech, meaning, and concise grammar.",
         "- Difficulty must match the requested level.",
         "- Avoid repeating recent sentences supplied by the user.",
         "- No markdown, no extra keys, JSON only."
@@ -168,21 +172,49 @@ app.post(
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        550
+        800
       );
 
-      const parsed = extractJson<Partial<DiscoverResponseBody>>(raw);
+      const parsed = extractJson<Record<string, unknown>>(raw);
+
+      // The model sometimes returns keys with slightly different names.
+      const pick = (...keys: string[]): string => {
+        for (const k of keys) {
+          const v = parsed[k];
+          if (typeof v === "string" && v.length > 0) return v;
+        }
+        return "";
+      };
+
       const payload: DiscoverResponseBody = {
         level,
         difficultyIndex: requestedIndex,
-        devanagari: String(parsed.devanagari ?? ""),
-        roman: String(parsed.roman ?? ""),
-        meaning: String(parsed.meaning ?? ""),
-        structure: String(parsed.structure ?? ""),
-        tip: String(parsed.tip ?? "")
+        devanagari: pick("devanagari", "sentence", "sanskrit", "devanāgarī"),
+        roman: pick("roman", "romanTransliteration", "transliteration", "iast", "IAST"),
+        meaning: pick("meaning", "translation", "englishMeaning", "english"),
+        structure: pick("structure", "grammar", "grammarExplanation"),
+        tip: pick("tip", "learningTip", "practiceTip")
       };
 
+      // Parse words array if present
+      if (Array.isArray(parsed.words)) {
+        payload.words = parsed.words
+          .filter((item) => typeof item === "object" && item !== null)
+          .map((item) => {
+            const obj = item as unknown as Record<string, unknown>;
+            return {
+              word: String(obj.word ?? ""),
+              transliteration: String(obj.transliteration ?? ""),
+              partOfSpeech: String(obj.partOfSpeech ?? ""),
+              meaning: String(obj.meaning ?? ""),
+              grammar: String(obj.grammar ?? "")
+            };
+          })
+          .filter((item) => item.word.length > 0);
+      }
+
       if (!payload.devanagari || !payload.roman || !payload.meaning) {
+        console.error("Model response missing required fields. Raw:", raw);
         throw new Error("Model response missing required sentence fields.");
       }
 
@@ -211,6 +243,7 @@ app.post(
         "where words is an array of objects with keys:",
         "word, transliteration, partOfSpeech, meaning, grammar",
         "Rules:",
+        "- In words array: word must be in Devanagari script, transliteration must be IAST.",
         "- Keep grammar concise but accurate.",
         "- If uncertain, mark the uncertainty in grammar field.",
         "- overallMeaning should be natural English translation.",
@@ -229,14 +262,17 @@ app.post(
       const parsed = extractJson<Partial<AnalyzeResponseBody>>(raw);
       const words = Array.isArray(parsed.words)
         ? parsed.words
-            .filter((item): item is Partial<WordBreakdown> => typeof item === "object" && item !== null)
-            .map((item) => ({
-              word: String(item.word ?? ""),
-              transliteration: String(item.transliteration ?? ""),
-              partOfSpeech: String(item.partOfSpeech ?? ""),
-              meaning: String(item.meaning ?? ""),
-              grammar: String(item.grammar ?? "")
-            }))
+          .filter((item) => typeof item === "object" && item !== null)
+          .map((item) => {
+            const obj = item as unknown as Record<string, unknown>;
+            return {
+              word: String(obj.word ?? ""),
+              transliteration: String(obj.transliteration ?? ""),
+              partOfSpeech: String(obj.partOfSpeech ?? ""),
+              meaning: String(obj.meaning ?? ""),
+              grammar: String(obj.grammar ?? "")
+            };
+          })
             .filter((item) => item.word.length > 0)
         : [];
 

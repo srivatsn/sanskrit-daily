@@ -1,4 +1,4 @@
-const CACHE_NAME = "sanskrit-daily-v1";
+const CACHE_NAME = "sanskrit-daily-v6";
 const SHELL_FILES = ["/", "/index.html", "/styles.css", "/app.js", "/manifest.webmanifest", "/icons/icon.svg", "/icons/icon-512.svg"];
 
 self.addEventListener("install", (event) => {

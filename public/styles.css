@@ -282,6 +282,7 @@ textarea:focus {
 .word-breakdown {
   display: grid;
   gap: 10px;
+  margin-top: 16px;
 }
 
 .word-row {
@@ -291,9 +292,45 @@ textarea:focus {
   padding: 10px;
 }
 
+.word-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .word-sanskrit {
   font-family: "Noto Serif Devanagari", serif;
   font-size: 1.1rem;
+  font-weight: 600;
+  }
+  
+  .word-info {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  
+  .word-meaning {
+    margin-top: 6px;
+    color: #e8f0ff;
+    font-size: 0.95rem;
+  }
+  
+  .word-grammar {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+  
+  .word-grammar a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+  }
+  
+  .word-grammar a:hover {
+    color: #ffd700;
+    border-bottom-color: #ffd700;
 }
 
 .word-meta {

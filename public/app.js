@@ -15,7 +15,8 @@ const sentenceStructure = document.getElementById("sentenceStructure");
 const sentenceTip = document.getElementById("sentenceTip");
 const discoverStatus = document.getElementById("discoverStatus");
 const nextSentenceBtn = document.getElementById("nextSentenceBtn");
-const resetBtn = document.getElementById("resetBtn");
+const easierBtn = document.getElementById("easierBtn");
+const harderBtn = document.getElementById("harderBtn");
 
 const sentenceInput = document.getElementById("sentenceInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
@@ -74,7 +75,8 @@ function saveProgress(progress) {
 
 function setDiscoverLoading(isLoading, message = "") {
   nextSentenceBtn.disabled = isLoading;
-  resetBtn.disabled = isLoading;
+  easierBtn.disabled = isLoading;
+  harderBtn.disabled = isLoading;
   if (message) {
     discoverStatus.textContent = message;
     discoverStatus.classList.remove("hidden");
@@ -91,6 +93,13 @@ function renderSentence(data) {
   sentenceMeaning.textContent = data.meaning || "";
   sentenceStructure.textContent = data.structure || "";
   sentenceTip.textContent = data.tip || "";
+
+  const discoverWordBreakdown = document.getElementById("discoverWordBreakdown");
+  if (data.words && data.words.length > 0) {
+    renderWordBreakdown(data.words, discoverWordBreakdown);
+  } else {
+    discoverWordBreakdown.innerHTML = "";
+  }
 }
 
 async function fetchDiscover(difficultyIndex, recentSentences) {
@@ -132,31 +141,95 @@ async function loadSentence(forceIncrement = false) {
   }
 }
 
-function resetProgress() {
-  const fresh = {
-    difficultyIndex: 0,
-    lastSeenDate: getTodayKey(),
-    recentSentences: []
-  };
-  saveProgress(fresh);
+function makeDifficultyChange(delta) {
+  const progress = getProgress();
+  progress.difficultyIndex = Math.max(0, Math.min(11, progress.difficultyIndex + delta));
+  saveProgress(progress);
   loadSentence(false);
 }
 
-function renderAnalysis(data) {
-  wordBreakdown.innerHTML = "";
+function linkifyGrammar(text) {
+  const grammarLinks = {
+    // Cases
+    nominative: "https://en.wikipedia.org/wiki/Nominative_case",
+    accusative: "https://en.wikipedia.org/wiki/Accusative_case",
+    instrumental: "https://en.wikipedia.org/wiki/Instrumental_case",
+    dative: "https://en.wikipedia.org/wiki/Dative_case",
+    ablative: "https://en.wikipedia.org/wiki/Ablative_case",
+    genitive: "https://en.wikipedia.org/wiki/Genitive_case",
+    locative: "https://en.wikipedia.org/wiki/Locative_case",
+    vocative: "https://en.wikipedia.org/wiki/Vocative_case",
+    // Numbers
+    singular: "https://en.wikipedia.org/wiki/Grammatical_number",
+    dual: "https://en.wikipedia.org/wiki/Dual_(grammatical_number)",
+    plural: "https://en.wikipedia.org/wiki/Plural",
+    // Genders
+    masculine: "https://en.wikipedia.org/wiki/Grammatical_gender",
+    feminine: "https://en.wikipedia.org/wiki/Grammatical_gender",
+    neuter: "https://en.wikipedia.org/wiki/Grammatical_gender",
+    // Tenses & Moods
+    present: "https://en.wikipedia.org/wiki/Present_tense",
+    past: "https://en.wikipedia.org/wiki/Past_tense",
+    future: "https://en.wikipedia.org/wiki/Future_tense",
+    imperative: "https://en.wikipedia.org/wiki/Imperative_mood",
+    optative: "https://en.wikipedia.org/wiki/Optative_mood",
+    perfect: "https://en.wikipedia.org/wiki/Perfect_(grammar)",
+    aorist: "https://en.wikipedia.org/wiki/Aorist",
+    // Voice
+    active: "https://en.wikipedia.org/wiki/Active_voice",
+    middle: "https://en.wikipedia.org/wiki/Middle_voice",
+    passive: "https://en.wikipedia.org/wiki/Passive_voice",
+    parasmaipada: "https://en.wikipedia.org/wiki/Sanskrit_verbs",
+    ātmanepada: "https://en.wikipedia.org/wiki/Sanskrit_verbs",
+    atmanepada: "https://en.wikipedia.org/wiki/Sanskrit_verbs",
+    // Sandhi & Compounds
+    sandhi: "https://en.wikipedia.org/wiki/Sandhi",
+    compound: "https://en.wikipedia.org/wiki/Compound_(linguistics)",
+    samāsa: "https://en.wikipedia.org/wiki/Sanskrit_compound",
+    samasa: "https://en.wikipedia.org/wiki/Sanskrit_compound",
+    tatpuruṣa: "https://en.wikipedia.org/wiki/Sanskrit_compound",
+    tatpurusa: "https://en.wikipedia.org/wiki/Sanskrit_compound",
+    bahuvrīhi: "https://en.wikipedia.org/wiki/Bahuvrihi",
+    bahuvrihi: "https://en.wikipedia.org/wiki/Bahuvrihi",
+    dvandva: "https://en.wikipedia.org/wiki/Dvandva",
+    avyayībhāva: "https://en.wikipedia.org/wiki/Sanskrit_compound",
+    avyayibhava: "https://en.wikipedia.org/wiki/Sanskrit_compound"
+  };
 
-  data.words.forEach((entry) => {
+  let result = text;
+  Object.keys(grammarLinks).forEach(term => {
+    const regex = new RegExp(`\\b(${term})\\b`, "gi");
+    result = result.replace(regex, (match) => {
+      const url = grammarLinks[term.toLowerCase()];
+      return `<a href="${url}" target="_blank" rel="noopener" title="Learn more about ${match}">${match}</a>`;
+    });
+  });
+  return result;
+}
+
+function renderWordBreakdown(words, container) {
+  container.innerHTML = "";
+  words.forEach((entry) => {
     const row = document.createElement("div");
     row.className = "word-row";
+    const iast = entry.transliteration || "";
+    const pos = entry.partOfSpeech || "";
+    const header = iast && pos ? `${iast} / ${pos}` : iast || pos || "";
+
     row.innerHTML = `
-      <div class="word-sanskrit">${entry.word}</div>
-      <div class="word-meta"><strong>IAST:</strong> ${entry.transliteration || "-"}</div>
-      <div class="word-meta"><strong>Part of Speech:</strong> ${entry.partOfSpeech || "-"}</div>
-      <div class="word-meta"><strong>Meaning:</strong> ${entry.meaning || "-"}</div>
-      <div class="word-meta"><strong>Grammar:</strong> ${entry.grammar || "-"}</div>
+      <div class="word-header">
+        <span class="word-sanskrit">${entry.word}</span>
+        ${header ? `<span class="word-info">(${header})</span>` : ""}
+      </div>
+      <div class="word-meaning">${entry.meaning || "-"}</div>
+      ${entry.grammar ? `<div class="word-grammar">${linkifyGrammar(entry.grammar)}</div>` : ""}
     `;
-    wordBreakdown.appendChild(row);
+    container.appendChild(row);
   });
+}
+
+function renderAnalysis(data) {
+  renderWordBreakdown(data.words, wordBreakdown);
 
   overallMeaning.textContent = data.overallMeaning;
   grammarNotes.textContent = data.explanation;
@@ -229,7 +302,8 @@ function init() {
   initPwa();
 
   nextSentenceBtn.addEventListener("click", () => loadSentence(true));
-  resetBtn.addEventListener("click", resetProgress);
+  easierBtn.addEventListener("click", () => makeDifficultyChange(-1));
+  harderBtn.addEventListener("click", () => makeDifficultyChange(1));
   analyzeBtn.addEventListener("click", analyzeSentence);
 
   sentenceInput.addEventListener("keydown", (evt) => {
