@@ -2,7 +2,7 @@
 
 A mobile-first Sanskrit learning app with:
 - `Discover`: gets a fresh Sanskrit sentence from an LLM, with increasing difficulty.
-- `Analyze`: sends any Sanskrit sentence to the LLM for word-by-word breakdown and explanation.
+- `Translate`: sends any Sanskrit sentence to the LLM for word-by-word breakdown and explanation.
 - PWA support: install on phone from browser (no app store account needed).
 
 ## Architecture

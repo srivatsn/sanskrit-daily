@@ -284,7 +284,7 @@ async function analyzeSentence(): Promise<void> {
   }
 
   analyzeBtn.disabled = true;
-  analyzeBtn.textContent = "Analyzing...";
+  analyzeBtn.textContent = "Translating...";
 
   try {
     const response = await fetch("/api/analyze", {
@@ -295,17 +295,17 @@ async function analyzeSentence(): Promise<void> {
 
     const data = (await response.json()) as AnalyzePayload & { error?: string };
     if (!response.ok) {
-      throw new Error(data.error || "Failed to analyze sentence.");
+      throw new Error(data.error || "Failed to translate sentence.");
     }
 
     renderAnalysis(data);
   } catch (error) {
-    analysisEmpty.textContent = error instanceof Error ? error.message : "Failed to analyze sentence.";
+    analysisEmpty.textContent = error instanceof Error ? error.message : "Failed to translate sentence.";
     analysisEmpty.classList.remove("hidden");
     analysisResult.classList.add("hidden");
   } finally {
     analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Analyze Sentence";
+    analyzeBtn.textContent = "Translate Sentence";
   }
 }
 
