@@ -277,7 +277,7 @@ function renderAnalysis(data: AnalyzePayload): void {
 async function analyzeSentence(): Promise<void> {
   const sentence = sentenceInput.value.trim();
   if (!sentence) {
-    analysisEmpty.textContent = "Please enter a Sanskrit sentence first.";
+    analysisEmpty.textContent = "Please enter a sentence first.";
     analysisEmpty.classList.remove("hidden");
     analysisResult.classList.add("hidden");
     return;
@@ -305,7 +305,7 @@ async function analyzeSentence(): Promise<void> {
     analysisResult.classList.add("hidden");
   } finally {
     analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Translate Sentence";
+    analyzeBtn.textContent = "Translate";
   }
 }
 

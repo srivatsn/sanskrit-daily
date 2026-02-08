@@ -238,15 +238,21 @@ app.post(
 
       const systemPrompt = [
         "You are a Sanskrit grammar and translation tutor.",
+        "The user will provide a sentence in either Sanskrit or English.",
+        "If the input is Sanskrit, translate it to English.",
+        "If the input is English, translate it to Sanskrit (provide the Sanskrit in Devanagari script).",
         "Return exactly one JSON object with keys:",
         "normalizedSentence, overallMeaning, explanation, words",
         "where words is an array of objects with keys:",
         "word, transliteration, partOfSpeech, meaning, grammar",
         "Rules:",
+        "- normalizedSentence should be the input sentence as provided by the user.",
+        "- overallMeaning should be the translation: English if input was Sanskrit, or Sanskrit (Devanagari) if input was English.",
         "- In words array: word must be in Devanagari script, transliteration must be IAST.",
+        "- When input is Sanskrit, perform word-by-word breakdown on the input Sanskrit sentence.",
+        "- When input is English, perform word-by-word breakdown on the generated Sanskrit translation.",
         "- Keep grammar concise but accurate.",
         "- If uncertain, mark the uncertainty in grammar field.",
-        "- overallMeaning should be natural English translation.",
         "- explanation should summarize sentence-level grammar and sense.",
         "- No markdown, no extra keys, JSON only."
       ].join("\n");
