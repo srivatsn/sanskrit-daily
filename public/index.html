@@ -70,24 +70,24 @@
 
       <section class="tab-panel" id="analyzePanel" role="tabpanel">
         <div class="card analyze-card">
-          <label for="sentenceInput" class="input-label">Enter a Sanskrit sentence (Devanagari or transliteration)</label>
+          <label for="sentenceInput" class="input-label">Enter a sentence in Sanskrit or English</label>
           <textarea
             id="sentenceInput"
             rows="4"
-            placeholder="e.g., रामः पुस्तकं पठति"
+            placeholder="e.g., रामः पुस्तकं पठति or The boy reads a book"
           ></textarea>
-          <button id="analyzeBtn" class="primary-btn">Translate Sentence</button>
+          <button id="analyzeBtn" class="primary-btn">Translate</button>
 
           <div id="analysisEmpty" class="analysis-empty">
-            Add a sentence and click Translate to get a word-by-word breakdown.
+            Enter a sentence in Sanskrit or English and click Translate.
           </div>
 
           <div id="analysisResult" class="analysis-result hidden">
-            <h2>Word-by-Word</h2>
-            <div id="wordBreakdown" class="word-breakdown"></div>
-            <h2>Meaning & Explanation</h2>
+            <h2>Translation</h2>
             <p id="overallMeaning" class="overall-meaning"></p>
             <p id="grammarNotes" class="grammar-notes"></p>
+            <h2>Word-by-Word</h2>
+            <div id="wordBreakdown" class="word-breakdown"></div>
           </div>
         </div>
       </section>
